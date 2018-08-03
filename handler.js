@@ -6,7 +6,7 @@ const sharp = require('sharp');
 
 var imageUri = 'https://c2.staticflickr.com/2/1723/27650518707_a230a7ccfa_c.jpg';
 
-module.exports.hello = (event, context, callback) => {
+module.exports.resize = (event, context, callback) => {
   var body = '';
   https.get(imageUri, (resp) => {
 
