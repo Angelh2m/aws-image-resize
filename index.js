@@ -8,7 +8,8 @@ var imageUri = 'https://avatars1.githubusercontent.com/u/416456?s=460&v=4';
 const fs = require('fs');
 
 
-app.get('/', function (req, res) {
+app.get('/:image', function (req, res) {
+  console.log(req.params.image);
 
   return https.get(imageUri, (resp) => {
     let body = '';
@@ -24,13 +25,22 @@ app.get('/', function (req, res) {
 
       sharp(img)
         .rotate()
-        .resize(200)
+        .resize(50)
         .toBuffer()
         .then(data => {
+          // res.set('Content-Type', 'image/png');
+          res.set({
+            'Content-Type': 'image/jpg',
+            'Content-Length': data.length,
+            'isBase64Encoded': true
+          });
+          var image = new Buffer(data, 'base64');
 
-          res.set('Content-Type', 'image/jpg');
-          res.send(data)
-          // res.pipe(res);
+
+          return image
+        }).then(converted => {
+          console.log('IMAGE ', converted);
+          res.send(converted)
         })
         .catch(err => {
           console.log(err);
@@ -52,56 +62,3 @@ const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log('Server Running');
 });
-
-// 'use strict';
-
-// const http = require('http');
-// const https = require('https');
-// const sharp = require('sharp');
-
-// var imageUri = 'https://c2.staticflickr.com/2/1723/27650518707_a230a7ccfa_c.jpg';
-
-// module.exports.hello = (event, context, callback) => {
-//   var body = '';
-//   https.get(imageUri, (resp) => {
-
-//     resp.setEncoding('base64');
-
-//     resp.on('data', (data) => {
-//       body += data
-//     });
-
-//     resp.on('end', () => {
-
-//       let imgBuffer = Buffer.from(body, 'base64');
-//       sharp(imgBuffer)
-//         .rotate()
-//         .resize(200)
-//         .toBuffer()
-//         .then(data => {
-
-//           const res = {
-//             statusCode: 200,
-//             isBase64Encoded: true,
-//             headers: {
-//               'Content-Type': 'image/jpg',
-//             },
-//             body: data
-//           };
-
-//           callback(null, res);
-
-//         })
-//         .catch(err => {
-//           console.log(err);
-//         });
-
-
-
-//     });
-//   }).on('error', (e) => {
-//     console.log(`Got error: ${e.message}`);
-//   });
-
-
-// };
