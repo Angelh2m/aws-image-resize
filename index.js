@@ -3,11 +3,12 @@ const express = require('express')
 const app = express()
 const https = require('https');
 const sharp = require('sharp');
-var imageUri = 'https://avatars1.githubusercontent.com/u/416456?s=460&v=4';
+var imageUri = 'https://s3.amazonaws.com/livingwithannah/LivingAnnah-BeefBarbacoa-InstantPot-medium.jpg';
 
 
-app.get('/:image', function (req, res) {
+app.get('/:image/:size?', function (req, res) {
   // console.log(req.params.image);
+  const toSize = req.params.size;
 
   return https.get(imageUri, (resp) => {
     let body = '';
@@ -23,7 +24,7 @@ app.get('/:image', function (req, res) {
       var img = new Buffer(body, 'base64');
       return sharp(img)
         .rotate()
-        .resize(50)
+        .resize(Number(toSize))
         .toBuffer()
         .then(data => {
 
@@ -76,7 +77,6 @@ const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
 
 // Export the AWS Lambda server proxy.
 exports.handler = (event, context) => awsServerlessExpress.proxy(server, event, context);
-
 
 
 // const port = process.env.PORT || 3000;

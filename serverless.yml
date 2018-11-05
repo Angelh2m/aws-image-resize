@@ -1,4 +1,4 @@
-service: node-rezise # NOTE: update this with your service name
+service: blog-image-resize-ondemand # NOTE: update this with your service name
 
 provider:
   name: aws
